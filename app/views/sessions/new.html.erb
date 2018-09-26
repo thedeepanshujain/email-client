@@ -1,0 +1,11 @@
+<% provide(:title, "Login") %>
+
+<%= form_with scope: :session, url: login_path, local: true, class: 'form-group' do |form| %>
+  
+	<h1>Login</h1>  
+    <%= form.text_field :email, class: 'form-control', placeholder: "Email" %>
+    <%= form.password_field :password, class: 'form-control', placeholder: "Password" %>
+  	<%= form.submit 'Login', class: "btn btn-primary" %>
+        
+<% end %>
+

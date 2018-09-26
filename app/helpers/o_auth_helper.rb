@@ -1,3 +1,6 @@
+require 'google/api_client/client_secrets'
+require 'json'
+
 module OAuthHelper
 
 	SECRETS_PATH = 'config/client_secrets.json'

@@ -16,8 +16,20 @@ class SessionsController < ApplicationController
 			db_response = @user.update_login_time
 			puts 'db update_login_time : #{db_response.to_json}'
 			initialize_oauth
-
+			redirect_to current_user
+		else
+			flash[:danger] = "Invalid email/password combination"
+			render 'new'
 		end
+	end
 
+	def destroy
+		logout
+		redirect_to root_url
+	end
+
+	def oauth
+		initialize_oauth params[:code]
+		redirect_to current_user
 	end
 end
