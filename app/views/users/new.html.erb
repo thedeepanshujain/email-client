@@ -1,0 +1,17 @@
+<% provide(:title, "New User") %>
+
+<h1>Add New User</h1>
+
+<%= form_with scope: :users, url: users_path, local: true, class: 'form-group' do |form| %>
+  
+  <%= form.text_field :name, class: 'form-control', placeholder: "Name" %>
+  <%= form.text_field :email, class: 'form-control', placeholder: "Email" %>
+  <%= form.password_field :password, class: 'form-control', placeholder: "Password" %>
+  <%= form.password_field :password_confirmation, class: 'form-control', placeholder: "Confirm Password" %>
+  
+  <div class= "form-check form-check-inline">
+    <%= form.check_box :admin, class: 'form-check-input'%> 
+    <%= form.label :admin, 'Grant Admin Access', class: "form-check-label" %>
+  </div>
+  <%= form.submit 'Add User', class: "btn btn-primary" %>
+<% end %>
