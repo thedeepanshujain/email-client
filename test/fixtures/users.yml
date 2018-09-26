@@ -1,0 +1,33 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  name: MyString
+  email: MyString
+  pending_messages: MyString
+  replied_messages: MyString
+  unassigned_messages: MyString
+  transferred_messages: MyString
+  pending_count: 1
+  replied_count: 1
+  unassigned_count: 1
+  transferred_count: 1
+  last_login_time: 2018-09-27 01:24:45
+  last_activity_time: 2018-09-27 01:24:45
+  last_history_id: MyString
+  password_digest: MyString
+
+two:
+  name: MyString
+  email: MyString
+  pending_messages: MyString
+  replied_messages: MyString
+  unassigned_messages: MyString
+  transferred_messages: MyString
+  pending_count: 1
+  replied_count: 1
+  unassigned_count: 1
+  transferred_count: 1
+  last_login_time: 2018-09-27 01:24:45
+  last_activity_time: 2018-09-27 01:24:45
+  last_history_id: MyString
+  password_digest: MyString
