@@ -4,6 +4,7 @@ Rails.application.routes.draw do
   root 'sessions#new'
 
   resources :users
+  resources :messages
    
   get '/about/',	to: 'static_pages#about'
 

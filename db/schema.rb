@@ -10,12 +10,27 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2018_09_26_211809) do
+ActiveRecord::Schema.define(version: 2018_09_26_213936) do
 
   create_table "auth_tokens", force: :cascade do |t|
     t.string "refresh_token"
     t.string "access_token"
     t.datetime "expires_at"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
+  create_table "messages", force: :cascade do |t|
+    t.string "message_id"
+    t.string "assigned_to"
+    t.string "reply_to"
+    t.string "reply"
+    t.string "labels"
+    t.integer "status"
+    t.string "contact_email"
+    t.string "thread_id"
+    t.string "message_time"
+    t.string "assignment_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
   end
