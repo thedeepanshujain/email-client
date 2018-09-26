@@ -15,10 +15,14 @@ class SessionsController < ApplicationController
 			login @user
 			db_response = @user.update_login_time
 			puts 'db update_login_time : #{db_response.to_json}'
-			unless session.has_key?(:auth_credentials)
+			if !session.has_key?(:auth_credentials)
 				initialize_oauth
 			end
-			redirect_to current_user
+
+			if session.has_key?(:auth_credentials)
+				redirect_to current_user
+			end
+			
 		else
 			flash[:danger] = "Invalid email/password combination"
 			render 'new'

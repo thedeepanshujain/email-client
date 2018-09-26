@@ -8,6 +8,7 @@ module OAuthHelper
 
 	def initialize_oauth (code = nil)
 		client_secrets = Google::APIClient::ClientSecrets.load(SECRETS_PATH)
+		puts 'client_secrets : '+client_secrets.inspect.to_json
 		auth_client = client_secrets.to_authorization
 		auth_client.update!(
 			:scope => SCOPE,
@@ -47,5 +48,7 @@ module OAuthHelper
 		else
 			puts 'error storing auth_credentials in db'
 		end
+
+		return auth_client
 	end
 end

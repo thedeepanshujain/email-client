@@ -17,7 +17,7 @@ class UsersController < ApplicationController
 
 	def show
 		@user = User.find_by(id: params['id'])
-		render messages_path
+		redirect_to messages_path
 	end
 
 	private
