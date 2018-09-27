@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2018_09_27_174214) do
+ActiveRecord::Schema.define(version: 2018_09_27_203619) do
 
   create_table "assignments", force: :cascade do |t|
     t.datetime "assignment_time"
@@ -44,6 +44,7 @@ ActiveRecord::Schema.define(version: 2018_09_27_174214) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.string "subject"
+    t.string "snippet"
   end
 
   create_table "users", force: :cascade do |t|

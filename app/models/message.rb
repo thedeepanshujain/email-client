@@ -13,9 +13,16 @@ class Message < ApplicationRecord
 
 		self.labels = message_gmail.label_ids.to_json
 
-		from_header = message_gmail.payload.headers.detect {|header| header.name.eql? 'From'}
-		self.contact_email = from_header.value
-
+		message_gmail.payload.headers.each do |header|
+			case header.name
+			when 'From'
+				self.contact_email = header.value			
+			when 'Subject'
+				self.subject = header.value
+			end
+		end
+		
+		self.snippet = message_gmail.snippet 
 		self.thread_id = message_gmail.thread_id
 
 		message_time_ms = message_gmail.internal_date
