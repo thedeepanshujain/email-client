@@ -5,7 +5,8 @@ Rails.application.routes.draw do
 
   resources :users
   resources :messages
-   
+  resources :assignments
+  
   get '/about/',	to: 'static_pages#about'
 
   get '/login',   to: 'sessions#new'

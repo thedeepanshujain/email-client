@@ -35,6 +35,10 @@ class SessionsController < ApplicationController
 	end
 
 	def oauth
+		if params.has_key? (:error)
+			render :json => error.to_json
+			return
+		end
 		initialize_oauth params[:code]
 		redirect_to current_user
 	end
