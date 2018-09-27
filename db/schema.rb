@@ -10,7 +10,17 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2018_09_26_213936) do
+ActiveRecord::Schema.define(version: 2018_09_27_174214) do
+
+  create_table "assignments", force: :cascade do |t|
+    t.datetime "assignment_time"
+    t.string "message_id"
+    t.string "assigned_to"
+    t.string "assigned_from"
+    t.integer "status"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
 
   create_table "auth_tokens", force: :cascade do |t|
     t.string "refresh_token"
@@ -33,6 +43,7 @@ ActiveRecord::Schema.define(version: 2018_09_26_213936) do
     t.string "assignment_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.string "subject"
   end
 
   create_table "users", force: :cascade do |t|
@@ -53,6 +64,7 @@ ActiveRecord::Schema.define(version: 2018_09_26_213936) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.boolean "admin"
+    t.string "signature"
   end
 
 end
