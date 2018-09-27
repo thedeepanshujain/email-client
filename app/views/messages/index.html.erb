@@ -1,0 +1,27 @@
+<table class="table">
+	<thead>
+		<tr>
+			<th scope="col">ID</th>
+			<th scope="col">SNIPPET</th>
+			<th scope="col">LABELS</th>
+			<th scope="col">SIZE</th>
+			<th scope="col">TYPE</th>
+			<th scope="col">STATUS</th>
+
+		</tr>
+	</thead>
+	<tbody>
+		<% @messages.each do |message| %>
+			<% message_id = message.id%>
+			<tr id= <%= message_id%>>
+				<td> <%= message.id %> </td>
+				<td> <%= link_to message.snippet, message_path(message_id) %> </td>
+				<td> <%= message.label_ids %> </td>
+				<td> <%= message.size_estimate %> </td>
+				<td> <%= 'Message' %> </td>
+				<td> <%= 1 %> </td>
+			</tr>	
+		<% end %>
+
+	</tbody>
+</table>

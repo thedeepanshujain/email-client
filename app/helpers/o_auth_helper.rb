@@ -18,30 +18,33 @@ module OAuthHelper
 			})
 
 		auth_db = AuthToken.last || AuthToken.new
-			
+		
 		if code.nil? && auth_db.refresh_token.nil?
 			auth_uri = auth_client.authorization_uri.to_s
 			redirect_to(auth_uri)
+			return
 		else
-			auth_client.refresh_token = auth_db.refresh_token
+			auth_client.refresh_token = auth_db.refresh_token	
 			auth_client.access_token = auth_db.access_token
 			auth_client.expires_at = auth_db.expires_at
-
 			auth_client.code = code
 
-			if auth_client.expired?
+			if auth_client.expires_at.nil? || auth_client.expired?
 				auth_client.fetch_access_token!
-			end
-			auth_client.client_secret = nil
-			session[:auth_credentials] = auth_client.to_json
+
+				auth_client.client_secret = nil
+
+				session[:auth_credentials] = auth_client.to_json
+
+				auth_db.access_token = auth_client.access_token
+				auth_db.expires_at = auth_client.expires_at
+
+				if auth_db.refresh_token.nil?
+					auth_db.refresh_token = auth_client.refresh_token
+				end
+			end		
 		end
 
-		auth_db.access_token = auth_client.access_token
-		auth_db.expires_at = auth_client.expires_at
-
-		if !auth_db.refresh_token.nil?
-			auth_db.refresh_token = auth_client.refresh_token
-		end
 
 		if auth_db.save
 			puts 'saved auth_credentials in db'

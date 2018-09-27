@@ -6,6 +6,7 @@ module GmailHelper
 
 	APP_NAME = 'email-management-system'
 	USER_ID = 'me'
+	LABEL_INBOX = 'INBOX'
 
 	def authorize
 		return initialize_oauth
@@ -15,23 +16,24 @@ module GmailHelper
 		@service = Google::Apis::GmailV1::GmailService.new
     	@service.client_options.application_name = APP_NAME
     	@service.authorization = authorize
-    	while authorize.nil? end
-    	@service.authorization = authorize
+    	while authorize.nil? 
+    		@service.authorization = authorize
+    	end
 	end
 
-	def get_messages (format = 'full', page_token = nil, max_results = 10)
+	def get_messages (format = 'full', page_token = nil, max_results = 10, label_ids = LABEL_INBOX)
 		@service || self.initialize_service
 		result = Array.new()
-		message_ids = get_message_ids(page_token, max_results)
-		message_ids.each do |message|
-			result << get_message_by_id (message.id, format)
+		message_ids = get_message_ids(page_token, max_results, label_ids)
+		message_ids.messages.each do |message|
+			result << get_message_by_id(message.id, format)
 		end
 		return result
 	end
 
-	def get_message_ids (page_token = nil, max_results = 10)
+	def get_message_ids (page_token = nil, max_results = 10, label_ids = LABEL_INBOX)
 		@service || self.initialize_service
-		return @service.list_user_messages(USER_ID, max_results: max_results, page_token: page_token)
+		return @service.list_user_messages(USER_ID, max_results: max_results, page_token: page_token, label_ids: label_ids)
 	end
 
 	def get_message_by_id (message_id, format='full')
@@ -56,7 +58,7 @@ module GmailHelper
 
 	def get_user_history (start_history_id: nil, history_types: nil)
 		@service || self.initialize_service
-		return list_user_histories (USER_ID, start_history_id: start_history_id, history_types: history_types)
+		return list_user_histories(USER_ID, start_history_id: start_history_id, history_types: history_types)
 
 	end
 

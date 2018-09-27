@@ -26,7 +26,12 @@ class User < ApplicationRecord
 
     def unassigned(message_id)
         self.pending_messages = remove_message_id(self.pending_messages, message_id)
-        self.pending_count = self.pending_count.nil? ? raise 'Was not assigned to this user' : self.pending_count-1
+        if self.pending_count.nil?
+            raise 'Was not assigned to this user'
+        else
+            self.pending_count = self.pending_count-1
+        end    
+        
         self.unassigned_messages = add_message_id(self.unassigned_messages, message_id)
         self.unassigned_count = self.unassigned_count.nil? ? 1 : self.unassigned_count+1
     end
