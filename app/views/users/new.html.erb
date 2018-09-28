@@ -4,10 +4,12 @@
 
 <%= form_with scope: :users, url: users_path, local: true, class: 'form-group' do |form| %>
   
-  <%= form.text_field :name, class: 'form-control', placeholder: "Name" %>
-  <%= form.text_field :email, class: 'form-control', placeholder: "Email" %>
-  <%= form.password_field :password, class: 'form-control', placeholder: "Password" %>
-  <%= form.password_field :password_confirmation, class: 'form-control', placeholder: "Confirm Password" %>
+  <%= form.text_field :name, class: 'form-control', placeholder: "Name",  required: 'true' %>
+  <%= form.text_field :email, class: 'form-control', placeholder: "Email",  required: 'true' %>
+  <%= form.password_field :password, class: 'form-control', placeholder: "Password",  required: 'true' %>
+  <%= form.password_field :password_confirmation, class: 'form-control', placeholder: "Confirm Password",  required: 'true' %>
+
+  <%= form.text_area :signature, class: 'form-control', placeholder: "Signature (max 10000 chars)", maxlength: 10 %>
   
   <div class= "form-check form-check-inline">
     <%= form.check_box :admin, class: 'form-check-input'%> 

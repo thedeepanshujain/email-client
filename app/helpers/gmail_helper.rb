@@ -51,9 +51,17 @@ module GmailHelper
 		return @service.create_user_label(USER_ID, label_object)
 	end
 
-	def send_message (message_body)
+	def send_message (message_body, thread_id)
 		@service || self.initialize_service
-		return @service.send_user_message(USER_ID, message_body)
+		message = Google::Apis::GmailV1::Message.new
+		message.raw = message_body.encoded
+		message.thread_id = thread_id
+		puts 'Message class : '
+		
+		puts message.to_s
+		puts 'Sending Message'
+		
+		return @service.send_user_message(USER_ID, message_object = message)
 	end
 
 	def get_user_history (start_history_id: nil, history_types: nil)

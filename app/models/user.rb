@@ -7,6 +7,7 @@ class User < ApplicationRecord
                     uniqueness: { case_sensitive: false }
     validates :password, presence: true, length: { minimum: 5 }
     has_secure_password
+    validates :signature, length: { maximum: 10000 }
 
     def update_login_time
     	self.update_attribute('last_login_time', Time.now.to_s(:db))

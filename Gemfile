@@ -7,6 +7,7 @@ gem 'bootstrap-sass'
 gem 'bcrypt'
 gem 'jquery-rails'
 gem 'google-api-client'
+gem 'mail'
 
 # Bundle edge Rails instead: gem 'rails', github: 'rails/rails'
 gem 'rails', '~> 5.2.1'
