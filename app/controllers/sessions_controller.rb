@@ -19,7 +19,7 @@ class SessionsController < ApplicationController
 				initialize_oauth
 			end
 
-			if session.has_key?(:auth_credentials)
+			if true
 				redirect_to current_user
 			end
 			

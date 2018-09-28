@@ -16,7 +16,6 @@
 //= require_tree .
 //= require jquery
 //= require bootstrap
-//= require lodash
 
 $(document).ready(function(){
 

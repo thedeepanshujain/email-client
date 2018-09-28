@@ -2,7 +2,7 @@
 	<% puts item.to_json %>
 	<% header_subject = item.payload.headers.detect {|header| header.name.eql? 'Subject'}%>
 
-	<h2><%= header_subject.value %></h2>
+	<h2><%= link_to header_subject.value, message_path(item.id) %></h2>
 	<small><em><%= Time.at(item.internal_date) %></em></small>
 	<br>
 	<small> <%= item.label_ids %></small>

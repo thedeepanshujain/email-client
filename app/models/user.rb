@@ -37,6 +37,22 @@ class User < ApplicationRecord
         self.unassigned_count = self.unassigned_count.nil? ? 1 : self.unassigned_count+1
     end
 
+    def replied_to(message_id)
+        begin
+            self.pending_messages = remove_message_id(self.pending_messages, message_id)
+            self.pending_count = self.pending_count-1
+        rescue Exception =>  e
+            unless self.admin
+                raise e 
+            end
+        end
+
+        self.replied_messages = add_message_id(self.replied_messages, message_id)
+        self.replied_count = self.replied_count.nil? ? 1 : self.replied_count+1
+
+
+    end
+
     private def add_message_id(json_string, message_id)
         append_array = Array[message_id]
         append_to = Array.new()

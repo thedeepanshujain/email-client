@@ -9,16 +9,24 @@ class Message < ApplicationRecord
 	end
 
 	def first_assignment(message_gmail, assignment)
-		self.message_id = message_gmail.id
+		
+		gmail_to_db(message_gmail, STATUS_RECEIVED)
+		self.assigned_to = assignment.assigned_to
+		self.assignment_id = assignment.id
+	end
 
+	def gmail_to_db(message_gmail, status)
+
+		self.message_id = message_gmail.id
 		self.labels = message_gmail.label_ids.to_json
+
+		status_field = status==1 ? 'From' : 'To'
 
 		message_gmail.payload.headers.each do |header|
 			case header.name
-			when 'From'
-				self.contact_email = header.value			
-			when 'Subject'
-				self.subject = header.value
+			when status_field		then	self.contact_email = header.value
+			when 'Subject'	then	self.subject = header.value
+
 			end
 		end
 		
@@ -27,9 +35,11 @@ class Message < ApplicationRecord
 
 		message_time_ms = message_gmail.internal_date
 		self.message_time = Time.at(message_time_ms).to_s(:db)
+		self.status = status
+	end
 
-		self.status = STATUS_RECEIVED
-		self.assigned_to = assignment.assigned_to
-		self.assignment_id = assignment.id
+	def update_replied(sent_message_id, current_user_id)
+		self.update_attribute('reply', sent_message_id)
+		self.update_attribute('replied_by', current_user_id)
 	end
 end

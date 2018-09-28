@@ -11,4 +11,8 @@ class Assignment < ApplicationRecord
 	def update_unassigned
 		self.update_attribute('status', -1)
 	end
+
+	def update_replied
+		self.update_attribute('status', 0)
+	end
 end
