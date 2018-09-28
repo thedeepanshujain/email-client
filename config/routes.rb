@@ -16,5 +16,8 @@ Rails.application.routes.draw do
   get '/auth/google_oauth2/callback', to: 'sessions#oauth'
 
   get '/adduser',  to: 'users#new'
+
+  get '/messages/page/:next_page_token',  to: 'messages#page'
+  get '/messages/page/',  to: 'messages#page'
   
 end

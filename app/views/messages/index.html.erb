@@ -1,27 +1,13 @@
-<table class="table">
-	<thead>
-		<tr>
-			<th scope="col">ID</th>
-			<th scope="col">SNIPPET</th>
-			<th scope="col">LABELS</th>
-			<th scope="col">SIZE</th>
-			<th scope="col">TYPE</th>
-			<th scope="col">STATUS</th>
+<div id="div_messages">
+	<%= render partial: "message", collection: @messages_gmail, as: :item, layout: "message" %>
+</div>
 
-		</tr>
-	</thead>
-	<tbody>
-		<% @messages.each do |message| %>
-			<% message_id = message.id%>
-			<tr id= <%= message_id%>>
-				<td> <%= message.id %> </td>
-				<td> <%= link_to message.snippet, message_path(message_id) %> </td>
-				<td> <%= message.label_ids %> </td>
-				<td> <%= message.size_estimate %> </td>
-				<td> <%= message.payload.mime_type %> </td>
-				<td> <%= 1 %> </td>
-			</tr>	
-		<% end %>
-
-	</tbody>
-</table>
+<div id="pagination" data-pagination-endpoint='<%=@endpoint%>'>
+	<div class="container">
+		<div class="item-1"></div>
+		<div class="item-2"></div>
+		<div class="item-3"></div>
+		<div class="item-4"></div>
+		<div class="item-5"></div>
+	</div>
+</div>

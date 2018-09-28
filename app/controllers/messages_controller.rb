@@ -1,27 +1,25 @@
 class MessagesController < ApplicationController
 	 skip_before_action :verify_authenticity_token
 
-	def index
-		@params = params
-		@messages = get_messages('metadata')
-		# render :json => @messages
+	def index		
+		@messages_gmail, @next_page_token = get_messages('metadata')
+		@endpoint = '/messages/page/' + @next_page_token
+		add_to_db(@messages_gmail)
 	end
 
 	def show
 		@params = params
 		@message = get_message_by_id(params[:id])
 		
-		# Base64.decode64(enc)
-		render :json => @message
 
-		# @headers = @message.payload.headers
-		# @headers.each do |header|
-		# 	case header.name
-		# 	when 'Subject'	then	@subject = header.value;
-		# 	when 'Date'		then	@date = header.value;
-		# 	when 'From'		then	@from = header.value
-		# 	end
-		# end
+		@headers = @message.payload.headers
+		@headers.each do |header|
+			case header.name
+			when 'Subject'	then	@subject = header.value;
+			when 'Date'		then	@date = header.value;
+			when 'From'		then	@from = header.value
+			end
+		end
 
 		# @data_plain = ''
 		# @data_html = ''
@@ -44,8 +42,8 @@ class MessagesController < ApplicationController
 		email_from = 'thedeepanshujain@gmail.com'
 		email_to = 'Deepanshu Jain <jaindeepanshu7@gmail.com>'
 		subject = 'Test Subject'
-		message_text = 'testing the reply feature subject test'
-		file_path = 'config/client_secrets.json'
+		message_text = '<h1>testing the reply feature subject test</h1>'
+		file_path = nil
 		references = '<CAJ=K8xt=wdTaWxU-BeeDST6u01ekYXBPPkBMG28816_f2T53yQ@mail.gmail.com> <CABBpyuTpAJHSV+42_e7ffBs4DkZQUSYT0yncUV2i7TwCUTBBVw@mail.gmail.com> <CABBpyuSPcC2C3xbNrTdYK=n+xfqk_zCEhRo7Lp-S86AC=JrgNQ@mail.gmail.com>'
 		reply_to = '<CABBpyuSPcC2C3xbNrTdYK=n+xfqk_zCEhRo7Lp-S86AC=JrgNQ@mail.gmail.com>'
 		thread_id = '1661cda5f0daee56'
@@ -57,12 +55,9 @@ class MessagesController < ApplicationController
 		# references = params[:references]
 		# reply_to = params[:reply_to]
 
-		
-		
-
 		# mail = Base64.urlsafe_encode64(mail.to_s)
 
-		mail = create_mail(email_from, email_to, subject, message_text, file_path, references, reply_to)
+		mail = create_mail(email_from, email_to, subject, message_text, references, reply_to, file_path)
 		render :json => send_message(mail, thread_id)
 
 		{
@@ -73,5 +68,16 @@ class MessagesController < ApplicationController
     		"threadId": "1661cda5f0daee56"
 		}
 
+	end
+
+	def page
+		messages_gmail, next_page_token = get_messages('metadata', params[:next_page_token])
+		messages_html =  render_to_string(
+			:partial => "message", 
+			:collection => messages_gmail, 
+			:as => 'item', 
+			:layout => "../messages/message")
+		
+		render :json => {:messages => messages_html, :next_page_token => next_page_token}
 	end
 end

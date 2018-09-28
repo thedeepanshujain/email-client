@@ -28,7 +28,7 @@ module GmailHelper
 		message_ids.messages.each do |message|
 			result << get_message_by_id(message.id, format)
 		end
-		return result
+		return result, message_ids.next_page_token
 	end
 
 	def get_message_ids (page_token = nil, max_results = 10, label_ids = LABEL_INBOX)
