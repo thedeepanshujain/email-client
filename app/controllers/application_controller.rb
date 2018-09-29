@@ -3,4 +3,5 @@ class ApplicationController < ActionController::Base
 	include OAuthHelper
 	include GmailHelper
 	include MessagesHelper
+	include AssignmentsHelper
 end

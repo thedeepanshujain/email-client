@@ -17,7 +17,7 @@ Rails.application.routes.draw do
 
   get '/adduser',  to: 'users#new'
 
-  get '/messages/page/:next_page_token',  to: 'messages#page'
-  get '/messages/page/',  to: 'messages#page'
+  get '/messages/page/:page_type/:page_token/',  to: 'messages#page'
+  get '/messages/page/:page_type/',  to: 'messages#page'
   
 end

@@ -4,7 +4,7 @@ class Assignment < ApplicationRecord
 		self.message_id = message_id
 		self.assigned_to = assigned_to
 		self.assigned_from = assigned_from
-		self.assigned_time = Time.now.to_s(:db)
+		self.assignment_time = Time.now.to_s(:db)
 		self.status = 1
 	end
 

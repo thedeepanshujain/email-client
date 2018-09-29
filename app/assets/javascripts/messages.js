@@ -23,13 +23,30 @@ $(document).ready(function(){
   const $paginationElem = $("#pagination");
   const $window = $(window);
   const $document = $(document);
-  const paginationUrl = $paginationElem.attr('data-pagination-endpoint');
+  const $tabItem = $(".tab-item")
+
+  $('.disable_anchor').click()
+
+  $tabItem.click(function(){
+    var path = $(this).attr('data-click-path');
+
+    $.ajax({
+        url: path
+      }).done(function (result) {
+        console.log($('#div_messages').children().length)
+        $('#div_messages').html(result.messages);
+        $paginationElem.attr('data-pagination-endpoint', path+result.next_page_token)
+        isPaginating = false;
+      });
+  })
+
+  $('.show_message_div').click(function(){
+    var path = $(this).attr('href');
+    console.log('div clicked')
+    window.location.href=path
+  })
 
 
-  console.log(paginationUrl)
-  // $(paginationElem.attributes).each(function(index, attribute) {
-  //   console.log("Attribute:"+attribute.nodeName+" | Value:"+attribute.nodeValue);
-  // });
 
   /* initialize pagination */
   $paginationElem.hide()
@@ -37,18 +54,27 @@ $(document).ready(function(){
 
   /* listen to scrolling */
   $window.on('scroll', _.debounce(function () {
+    paginationUrl = $paginationElem.attr('data-pagination-endpoint');
     if (!isPaginating && $window.scrollTop() > $document.height() - $window.height() - THRESHOLD) {
       isPaginating = true;
       $paginationElem.show();
+      
       $.ajax({
         url: paginationUrl
       }).done(function (result) {
-        console.log($('#div_messages').children().length)
         $('#div_messages').append(result.messages);
-        $paginationElem.attr('data-pagination-endpoint', '/messages/page/'+result.next_page_token)
+        $paginationElem.attr('data-pagination-endpoint', update_path(paginationUrl, result.next_page_token))
         isPaginating = false;
       });
+      
+      
     }
   }, 100));
 
 })
+
+function update_path(paginationUrl, next_page_token) {
+  paginationArray = paginationUrl.split('/')
+  paginationArray[paginationArray.length - 1] = next_page_token
+  return paginationArray.join('/')
+}

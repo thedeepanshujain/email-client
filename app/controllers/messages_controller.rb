@@ -1,18 +1,27 @@
 class MessagesController < ApplicationController
 	skip_before_action :verify_authenticity_token
 
+	STATUS_RECEIVED = 1
 	STATUS_SENT = 2
 
 	def index		
-		@messages_gmail, @next_page_token = get_messages('metadata')
-		@endpoint = '/messages/page/' + @next_page_token
-		add_to_db(@messages_gmail, 1)
+		if current_user.admin
+			#SHOW ALL MESSAGES OR HISTORY
+			@messages_gmail, @next_page_token = get_messages('metadata')
+			@endpoint = '/messages/page/' + @next_page_token
+			@messages_db = add_to_db(@messages_gmail, 1)
+		else
+			#SHOW PENDING MESSAGES BY DEFAULT
+			@messages_db = Message.find_by(status: STATUS_RECEIVED, assigned_to: current_user.id, reply: nil).order(message_time: desc).page
+		end
+		
 	end
 
 	def show
 		@params = params
 		@message_gmail = get_message_by_id(params[:id])
 		@message_db = Message.find_by(message_id: @message_gmail.id)
+		@all_users = User.all.take(User.count)
 
 		@headers = @message_gmail.payload.headers
 		@headers.each do |header|
@@ -22,45 +31,34 @@ class MessagesController < ApplicationController
 			when 'From'		then	@from = header.value
 			end
 		end
-
-		@data_plain = ''
-		if @message_gmail.payload.mime_type.include? 'text'
-			@data_plain = @message_gmail.payload.body.data
-		elsif @message_gmail.payload.mime_type.include? 'multipart'
-			@message_gmail.payload.parts.each do |part|
-			case part.mime_type
-				when 'text/plain'
-					@data_plain += part.body.data.force_encoding('UTF-8')
-			end
+		@data_plain = message_to_plain_text(@message_gmail)
+		@reply_gmail = get_message_by_id(@message_db.reply)
+		@data_plain_reply = message_to_plain_text (@reply_gmail)
+		
+		unless @message_db.replied_by.nil?
+			@reply_user = User.find_by(id: @message_db.replied_by)
 		end
-		else
-			@data_plain = @message_gmail.snippet
-		end
+		
 
-		# @data_plain = ''
-		# @data_html = ''
-		# @message.payload.parts.each do |part|
-		# 	case part.mime_type
-		# 		when 'text/plain'	then	@data_plain += part.body.data
-		# 		when 'text/html'	then	@data_html += part.body.data
-		# 	end
-		# end
-		# # render :json => @data_html
-		# unless @data_html.empty?
-		# 	temp_file = Tempfile.new(['','.html'], :encoding => 'ascii-8bit')
-		# 	temp_file.write(@data_html)	
-		# 	@path = 'file://'+temp_file.path
-		# end
+		unless @message_db.assigned_to.nil?
+			@assigned_user = User.find_by(id:  @message_db.assigned_to)
+		end
+		@value = [{:message_id => @message_db.message_id}, {:assigned_from => @message_db.assigned_to}]
 	end
 
 	def create 
-		source_message_gmail = params[:source_message_gmail]
+		source_message_id = params[:source_message_id]
 		message_text = params[:message_text]
 		file_path = params[:file_path]
 
+		source_message_gmail = get_message_by_id(source_message_id, 'metadata')
 		thread_id = source_message_gmail.thread_id
 		source_message_id = source_message_gmail.id
-		
+		source_to = nil
+		source_from = nil
+		source_subject = nil
+		source_references = nil
+		source_message_id_string = nil
 		source_message_gmail.payload.headers.each do |header|
 			case header.name
 				when 'From' 		then source_from = header.value
@@ -85,17 +83,28 @@ class MessagesController < ApplicationController
 		
 		update_db_reply(source_message_gmail, sent_message_gmail)
 
+		render 'message'
+
 	end
 
 	def page
-		messages_gmail, next_page_token = get_messages('metadata', params[:next_page_token])
-		add_to_db(messages_gmail, 1)
-		messages_html =  render_to_string(
-			:partial => "message", 
-			:collection => messages_gmail, 
-			:as => 'item', 
-			:layout => "../messages/message")
-		
+		page_type = params[:page_type]
+		page_token = params[:page_token]
+
+		case page_type
+			when 'new'
+				messages_gmail, next_page_token = get_messages('metadata', page_token)
+				messages_db = add_to_db(messages_gmail, 1)
+			when 'pending'
+				messages_db = Message.where(message_id: current_user.get_pending_messages).order(:message_time => :desc).page(page_token).per(10)
+				next_page_token = page_token.nil? ? 2 : page_token + 1
+
+			when 'replied'
+				messages_db = Message.where(message_id: current_user.get_replied_messages).order(:message_time => :desc).page(page_token).per(10)
+				next_page_token = page_token.nil? ? 2 : page_token + 1
+		end
+
+		messages_html =  render_to_string(:partial => "message",:collection => messages_db)
 		render :json => {:messages => messages_html, :next_page_token => next_page_token}
 	end
 end

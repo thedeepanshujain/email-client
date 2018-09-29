@@ -1,20 +1,75 @@
 <% provide(:title, @subject) %>
 <h1><%= @subject %></h1>
 
-<div>
+<div class="container">
 	
-	<div>
-		<p>From : <%= @from %></p>
+	<div class="container">
+
+		<div class='message_info'>
+			<p>From : <%= @from %></p>
+			<p>Time : <%= @date %></p>
+			<p>Labels : <%= @message_db.labels %></p>
+		</div>
+		
+		<% if @message_db.assigned_to.nil? %>
+			<!-- FORM -->
+			<div class='message_assign_form'>
+
+				<%= form_with url: assignments_path, local: true do |form| %>
+					<div class='form-group'>
+						<%= form.label :user_assigned, 'Assign to'%>
+						<%= form.select :user_assigned, @all_users.collect{ |user| [user.name, @value << {assigned_to: user.id}, @value.to_json] }, {include_blank: 'Select'}%>
+					</div>
+					
+					<%= form.submit 'Assign', class: "btn btn-primary" %>
+				<% end %>
+			</div>
+		<% elsif !@message_db.reply.nil?%>	
+			<div class='message_assign_form '>
+				<p>Replied by : </p>
+				<p>	<%= @reply_user.name  %> </p>
+				<p> <%= @reply_user.email %> </p>
+				
+			</div>
+
+		<% else %>
+			<div class='message_assign_form '>
+				<p>Assigned to : </p>
+				<p>	<%= @assigned_user.name  %> </p>
+				<p> <%= @assigned_user.email %> </p>
+				
+			</div>
+		<% end %>
 	</div>
-	
-	<div>
-		<p>Time : <%= @date %></p>
-	</div>
-	
-	<div>
+
+	<div class="container">
 		<p>Message : </p>
 		<pre> <%= @data_plain %> </pre>
-		<!-- <iframe src="<%= @path %>"></iframe> -->
-	 </div>
+	</div>
+
+</div>
+
+<!-- REPLY -->
+<div class="container">
 	
+	<div class='container'>
+		<% if @message_db.reply.nil? %>
+			<%= form_with url: messages_path, local: true, class: 'form-group reply_form' do |form| %>
+				<%= form.hidden_field :source_message_id, value: @message_gmail.id %>
+				<div class='form-group'>
+					<%= form.label :message_text, 'Reply : '%>
+					<%= form.text_area :message_text, class: 'form-control', rows: '3' %>		
+				</div>
+				<%= form.submit 'Reply', class: "btn btn-primary" %>
+			<% end %>
+		<% else %>
+			<p>Reply : </p>
+			<pre>
+				<%= @data_plain_reply %>
+			</pre>
+		<% end %>
+		
+	</div>
+	
+
 </div>

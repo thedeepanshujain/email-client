@@ -1,7 +1,12 @@
+@import "bootstrap-sprockets";
 @import "bootstrap";
 
 $light-gray: #777;
 $gray-medium-light: #eaeaea;
+
+ul#header_list li {
+    display:inline;
+}
 
 body {
   padding-top: 60px;
@@ -80,4 +85,17 @@ footer {
       margin-left: 15px;
     }
   }
+}
+
+.message_info {
+  float: left;
+}
+
+.message_assign_form {
+  float: right;
+  width: 20%;
+}
+
+.reply_form {
+  max-width: 100%;
 }

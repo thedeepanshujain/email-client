@@ -4,10 +4,12 @@ git_source(:github) { |repo| "https://github.com/#{repo}.git" }
 ruby '2.3.7'
 
 gem 'bootstrap-sass'
+gem 'bootstrap'
 gem 'bcrypt'
 gem 'jquery-rails'
 gem 'google-api-client'
 gem 'mail'
+gem 'kaminari'
 
 # Bundle edge Rails instead: gem 'rails', github: 'rails/rails'
 gem 'rails', '~> 5.2.1'
