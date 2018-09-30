@@ -6,9 +6,15 @@ class UsersController < ApplicationController
 	def create
 		@user = User.new(user_params)
 		
-		if @user.save
-			puts 'Success new user'
-			flash[:success] = "Success - Creating new user"
+		if current_user.nil? && !@user.admin
+			flash[:danger] = "Failed - Creating new user"
+			
+		elsif (current_user.nil? && @user.admin && User.count==0) || (!current_user.nil? && current_user.admin)
+			if @user.save
+				flash[:success] = "Success - Creating new user"
+			else
+				flash[:danger] = "Failed - Creating new user"
+			end
 		else
 			flash[:danger] = "Failed - Creating new user"
 		end

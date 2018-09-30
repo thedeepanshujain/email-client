@@ -5,7 +5,7 @@
 
       <ul id='header_list' class="nav navbar-nav navbar-right" float='left'>
         <li> <%= link_to "Home",   '/' %></li>
-        <li> <%= link_to "Reports",   '/' %></li>
+        <li> <%= link_to "Reports",   workinprogress_path %></li>
         
         <% if logged_in? %>
           <% if current_user.admin %>
@@ -16,8 +16,8 @@
               <b class="caret"></b>
             </a>
             <ul class="dropdown-menu">
-              <li><%= link_to "Profile", current_user %></li>
-              <li><%= link_to "Change Password", about_path %></li>
+              <li><%= link_to "Profile", workinprogress_path %></li>
+              <li><%= link_to "Change Password", workinprogress_path %></li>
               <li class="divider"></li>
               <li> <%= link_to "Log out", logout_path, method: :delete %> </li>
             </ul>

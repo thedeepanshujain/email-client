@@ -67,7 +67,6 @@ module MessagesHelper
 		puts 'UPDATING USER DATA'
 		puts current_user.class
 		puts current_user.to_json
-		gets
 		#UPDATE USER_DATA
 		current_user.replied_to(source_message_db.message_id)
 	end

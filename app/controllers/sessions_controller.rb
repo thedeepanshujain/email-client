@@ -3,7 +3,7 @@ class SessionsController < ApplicationController
 	def new
 		if session.has_key?(:user_id)
 			redirect_to current_user
-		elsif User.count(admin: 1) == 0
+		elsif User.where(admin: true).count == 0
 			redirect_to new_user_path
 		end
 	end
@@ -23,7 +23,7 @@ class SessionsController < ApplicationController
 				should_redirect = initialize_oauth
 			end
 
-			unless should_redirect.nil?
+			if !should_redirect.nil? || session.has_key?(:auth_credentials)
 				redirect_to current_user
 			end
 			

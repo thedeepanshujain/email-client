@@ -51,6 +51,10 @@ class MessagesController < ApplicationController
 		message_text = params[:message_text]
 		file_path = params[:file_path]
 
+		unless current_user.signature.nil?
+			message_text += '\n\n' + current_user.signature
+		end
+
 		source_message_gmail = get_message_by_id(source_message_id, 'metadata')
 		thread_id = source_message_gmail.thread_id
 		source_message_id = source_message_gmail.id
@@ -61,10 +65,11 @@ class MessagesController < ApplicationController
 		source_message_id_string = nil
 		source_message_gmail.payload.headers.each do |header|
 			case header.name
-				when 'From' 		then source_from = header.value
+				when 'From'			then source_from = header.value
 				when 'To'			then source_to = header.value
 				when 'Subject'		then source_subject = header.value
 				when 'References'	then source_references = header.value
+				when 'Message-Id'	then source_message_id_string = header.value
 				when 'Message-ID'	then source_message_id_string = header.value
 			end
 		end
@@ -82,7 +87,6 @@ class MessagesController < ApplicationController
 		sent_message_gmail = get_message_by_id(send_mail_response.id)
 		
 		update_db_reply(source_message_gmail, sent_message_gmail)
-		gets
 		redirect_to message_path(id: source_message_id)
 
 	end

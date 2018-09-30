@@ -8,6 +8,7 @@ Rails.application.routes.draw do
   resources :assignments
   
   get '/about/',	to: 'static_pages#about'
+  get '/workinprogress/', to: 'static_pages#construction'
 
   get '/login',   to: 'sessions#new'
   post '/login',   to: 'sessions#create'
@@ -16,8 +17,9 @@ Rails.application.routes.draw do
   get '/auth/google_oauth2/callback', to: 'sessions#oauth'
 
   get '/adduser',  to: 'users#new'
+  get '/changepassword', to: 'users#change_password'
 
   get '/messages/page/:page_type/:page_token/',  to: 'messages#page'
   get '/messages/page/:page_type/',  to: 'messages#page'
-  
+
 end
