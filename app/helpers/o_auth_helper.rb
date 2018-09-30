@@ -22,7 +22,7 @@ module OAuthHelper
 		if code.nil? && auth_db.refresh_token.nil?
 			auth_uri = auth_client.authorization_uri.to_s
 			redirect_to(auth_uri)
-			return
+			return nil
 		else
 			auth_client.refresh_token = auth_db.refresh_token	
 			auth_client.access_token = auth_db.access_token

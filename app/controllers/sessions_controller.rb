@@ -15,11 +15,13 @@ class SessionsController < ApplicationController
 			login @user
 			db_response = @user.update_login_time
 			puts 'db update_login_time : #{db_response.to_json}'
+			
+			should_redirect = nil
 			if !session.has_key?(:auth_credentials)
-				initialize_oauth
+				should_redirect = initialize_oauth
 			end
 
-			if true
+			unless should_redirect.nil?
 				redirect_to current_user
 			end
 			
