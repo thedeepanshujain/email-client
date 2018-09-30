@@ -24,18 +24,40 @@ $(document).ready(function(){
   const $window = $(window);
   const $document = $(document);
   const $tabItem = $(".tab-item")
+  var paginationUrl = $paginationElem.attr('data-pagination-endpoint');
+
+  $.ajax({
+    url: paginationUrl
+  }).done(function (result) {
+    $('#div_messages').append(result.messages);
+    if (typeof result.size!== undefined && result.size!==null && result.size >= 10) {
+      $paginationElem.attr('data-pagination-endpoint', update_path(paginationUrl, result.next_page_token))  
+    } else {
+      $(window).off('scroll');
+      $paginationElem.hide();
+    }
+    isPaginating = false;
+  });
 
   $('.disable_anchor').click()
 
-  $tabItem.click(function(){
+  $tabItem.click(function(e){
+    $("#pagination").show();
+    e.preventDefault();
+    $(this).tab('show');
     var path = $(this).attr('data-click-path');
-
+    $('#div_messages').empty();
     $.ajax({
         url: path
       }).done(function (result) {
         console.log($('#div_messages').children().length)
         $('#div_messages').html(result.messages);
-        $paginationElem.attr('data-pagination-endpoint', path+result.next_page_token)
+        if (typeof result.size!== undefined && result.size!==null && result.size >= 10) {
+          $paginationElem.attr('data-pagination-endpoint', path+result.next_page_token)  
+        } else {
+          $(window).off('scroll');
+          $("#pagination").hide();
+        }
         isPaginating = false;
       });
   })
@@ -49,7 +71,7 @@ $(document).ready(function(){
 
 
   /* initialize pagination */
-  $paginationElem.hide()
+  // $paginationElem.hide()
   let isPaginating = false
 
   /* listen to scrolling */
@@ -63,7 +85,12 @@ $(document).ready(function(){
         url: paginationUrl
       }).done(function (result) {
         $('#div_messages').append(result.messages);
-        $paginationElem.attr('data-pagination-endpoint', update_path(paginationUrl, result.next_page_token))
+        if (typeof result.size!== undefined && result.size!==null && result.size >= 10) {
+          $paginationElem.attr('data-pagination-endpoint', update_path(paginationUrl, result.next_page_token))  
+        } else {
+          $(window).off('scroll');
+          $paginationElem.remove();
+        }
         isPaginating = false;
       });
       

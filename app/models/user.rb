@@ -52,16 +52,23 @@ class User < ApplicationRecord
     end
 
     def replied_to(message_id)
+        puts 'IN REPLIED TO'
         begin
-            self.pending_messages = remove_message_id(self.pending_messages, message_id)
-            self.pending_count = self.pending_count-1
+            pending_messages = remove_message_id(self.pending_messages, message_id)
+            pending_count = self.pending_count-1
+            self.update_attribute('pending_messages', pending_messages)
+            self.update_attribute('pending_count', pending_count)
         rescue Exception =>  e
             unless self.admin
                 raise e 
             end
         end
-        self.replied_messages = add_message_id(self.replied_messages, message_id)
-        self.replied_count = self.replied_count.nil? ? 1 : self.replied_count+1
+        replied_messages = add_message_id(self.replied_messages, message_id)
+        replied_count = self.replied_count.nil? ? 1 : self.replied_count+1
+        
+        self.update_attribute('replied_messages', replied_messages)
+        self.update_attribute('replied_count', replied_count)
+
     end
 
     def get_pending_messages

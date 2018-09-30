@@ -13,6 +13,7 @@ class AssignmentsController < ApplicationController
 			assigned_to = param['assigned_to'] unless param['assigned_to'].nil?
 			assigned_from = param['assigned_from'] unless param['assigned_from'].nil?
 		end
+		new_assignment(message_id, assigned_to, assigned_from)
 		redirect_to message_path(id: message_id)
 	end
 

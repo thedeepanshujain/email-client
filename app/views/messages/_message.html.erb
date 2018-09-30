@@ -1,6 +1,14 @@
-<div class="jumbotron jumbotron_fluid show_message_div" href=<%= message_path(message.message_id)%>>
+<div class="jumbotron jumbotron_fluid show_message_div">
 	
-	<div> <h2><%= message.subject %></h2> </div>
+	<%	if !message.reply.nil?
+			status='replied'
+		elsif !message.assigned_to.nil?
+			status='assigned'
+		else 
+			status = 'unassigned'
+		end
+	%>
+	<div> <a href=<%= message_path(id: message.message_id) %>>  <h2><%= '[' + status + '] ' + message.subject %></h2> </a> </div>
 	<h6><%= message.contact_email %></h6>
 	<small><em><%= message.message_time %></em></small>
 	<small> <%= message.labels %></small>

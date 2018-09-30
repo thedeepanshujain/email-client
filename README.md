@@ -6,6 +6,9 @@ application up and running.
 Things you may want to cover:
 
 * Ruby version
+```
+ruby 2.3.7p456 (2018-03-28 revision 63024) [universal.x86_64-darwin18]
+```
 
 * System dependencies
 

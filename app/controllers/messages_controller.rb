@@ -7,14 +7,11 @@ class MessagesController < ApplicationController
 	def index		
 		if current_user.admin
 			#SHOW ALL MESSAGES OR HISTORY
-			@messages_gmail, @next_page_token = get_messages('metadata')
-			@endpoint = '/messages/page/' + @next_page_token
-			@messages_db = add_to_db(@messages_gmail, 1)
+			@endpoint = '/messages/page/inbox/'
 		else
 			#SHOW PENDING MESSAGES BY DEFAULT
-			@messages_db = Message.find_by(status: STATUS_RECEIVED, assigned_to: current_user.id, reply: nil).order(message_time: desc).page
-		end
-		
+			@endpoint = '/messages/page/pending/'
+		end	
 	end
 
 	def show
@@ -32,8 +29,11 @@ class MessagesController < ApplicationController
 			end
 		end
 		@data_plain = message_to_plain_text(@message_gmail)
-		@reply_gmail = get_message_by_id(@message_db.reply)
-		@data_plain_reply = message_to_plain_text (@reply_gmail)
+		
+		unless @message_db.reply.nil?
+			@reply_gmail = get_message_by_id(@message_db.reply)
+			@data_plain_reply = message_to_plain_text (@reply_gmail)
+		end
 		
 		unless @message_db.replied_by.nil?
 			@reply_user = User.find_by(id: @message_db.replied_by)
@@ -82,29 +82,46 @@ class MessagesController < ApplicationController
 		sent_message_gmail = get_message_by_id(send_mail_response.id)
 		
 		update_db_reply(source_message_gmail, sent_message_gmail)
-
-		render 'message'
+		gets
+		redirect_to message_path(id: source_message_id)
 
 	end
 
 	def page
 		page_type = params[:page_type]
-		page_token = params[:page_token]
-
+		page_token = params[:page_token] || 1
+		page_token = page_token.to_i
+		next_page_token = nil
+		messages_db = nil
 		case page_type
-			when 'new'
-				messages_gmail, next_page_token = get_messages('metadata', page_token)
-				messages_db = add_to_db(messages_gmail, 1)
 			when 'pending'
 				messages_db = Message.where(message_id: current_user.get_pending_messages).order(:message_time => :desc).page(page_token).per(10)
-				next_page_token = page_token.nil? ? 2 : page_token + 1
-
+				next_page_token = page_token + 1
 			when 'replied'
 				messages_db = Message.where(message_id: current_user.get_replied_messages).order(:message_time => :desc).page(page_token).per(10)
-				next_page_token = page_token.nil? ? 2 : page_token + 1
+				next_page_token = page_token + 1
+			when 'inbox'
+				if current_user.admin
+					messages_gmail, next_page_token = get_messages('metadata', page_token)
+					messages_db = add_to_db(messages_gmail, 1)
+				end
+			when 'unassigned'
+				if current_user.admin
+					messages_db = Message.where(status: STATUS_RECEIVED, reply: nil, assigned_to: nil).order(:message_time => :desc).page(page_token).per(10)
+					next_page_token = page_token + 1
+				end
+			when 'all_replied'
+				if current_user.admin
+					messages_db = Message.where(status: STATUS_RECEIVED).where.not(reply: nil).order(:message_time => :desc).page(page_token).per(10)
+					next_page_token = page_token + 1
+				end
+			when 'all_pending'
+				if current_user.admin
+					messages_db = Message.where(status: STATUS_RECEIVED, reply: nil).where.not(assigned_to: nil).order(:message_time => :desc).page(page_token).per(10)
+					next_page_token = page_token + 1
+				end
 		end
-
 		messages_html =  render_to_string(:partial => "message",:collection => messages_db)
-		render :json => {:messages => messages_html, :next_page_token => next_page_token}
+		render :json => {:messages => messages_html, :next_page_token => next_page_token, :size => messages_db.length}
 	end
 end

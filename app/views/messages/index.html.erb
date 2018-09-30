@@ -1,35 +1,47 @@
 <% provide(:title, "Messages") %>
 
-<header class = 'navbar navbar-default'>
+<div class='messages_tabs'>
+	<ul class="nav nav-tabs">
+		<% if current_user.admin %>
+			<li class="tab-item active" data-click-path='/messages/page/inbox/'>
+				<a class="btn disabled disable_anchor" href="">Inbox Messages</a>
+			</li>
+			<li class="tab-item " data-click-path='/messages/page/unassigned/'>
+				<a class="btn disabled nav-link  disable_anchor" href="#" disabled>UnAssinged Messages</a>
+			</li>
 
-
-
-	<div class="container">
-
-		<ul class="nav navbar-nav nav-tabs">
-			<% if current_user.admin %>
-				<li class="tab-item" data-click-path='/messages/page/new/'>
-					<a class="btn disabled nav-link disable_anchor" href="">New Messages</a>
-				</li>
-			<% end %>
+			<li class="tab-item" data-click-path='/messages/page/pending/'>
+				<a class="btn disabled nav-link  disable_anchor" href="#" disabled>My Pending Messages</a>
+			</li>
+			<li class="tab-item" data-click-path='/messages/page/replied/'>
+				<a class="btn disabled nav-link  disable_anchor" href="#" disabled>My Replied Messages</a>
+			</li>
+			<li class="tab-item" data-click-path='/messages/page/all_pending/'>
+				<a class="btn disabled nav-link  disable_anchor" href="#" disabled>All Pending Messages</a>
+			</li>
+			<li class="tab-item" data-click-path='/messages/page/all_replied/'>
+				<a class="btn disabled nav-link  disable_anchor" href="#" disabled>All Replied Messages</a>
+			</li>
+		<% else %>
 			<li class="tab-item" data-click-path='/messages/page/pending/'>
 				<a class="btn disabled nav-link  disable_anchor" href="#" disabled>Pending Messages</a>
 			</li>
 			<li class="tab-item" data-click-path='/messages/page/replied/'>
 				<a class="btn disabled nav-link  disable_anchor" href="#" disabled>Replied Messages</a>
 			</li>
-		</ul>
-		
-	</nav>
-
-		
-
-</header>
+		<% end %>
+	</ul>
+</div>
 
 <div id="div_messages">
-	<%= render @messages_db %>
 </div>
 
 <div id="pagination" data-pagination-endpoint='<%=@endpoint%>'>
-	
+	<div id="loading">
+		<ul class="bokeh">
+			<li></li>
+			<li></li>
+			<li></li>
+		</ul>
+	</div>
 </div>
