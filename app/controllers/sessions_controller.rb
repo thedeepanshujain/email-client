@@ -3,8 +3,8 @@ class SessionsController < ApplicationController
 	def new
 		if session.has_key?(:user_id)
 			redirect_to current_user
-		elsif User.count == 0
-			redirect_to new_user
+		elsif User.count(admin: 1) == 0
+			redirect_to new_user_path
 		end
 	end
 
